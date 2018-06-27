@@ -43,7 +43,7 @@ class CustomCalendar
      * The same rules apply to a leap year too as only the last month is affected in
      * a leap year.
      */
-    private $common_month_offsets = array(
+    private $month_offsets = array(
       1 => 0,   // January
       2 => 1,   // February
       3 => 1,   // March
@@ -85,6 +85,51 @@ class CustomCalendar
      * - Calculate the day of the week for the month of this day.
      * - Calculate the day of the week for this day.
      */
+
+    public function getDayOfWeek($date)
+    {
+        echo $date, "\n";
+        // Split the date into its individual parts.
+        $dateParts = explode('.', $date);
+
+        // Validate the input date.
+        if (empty($dateParts) || count($dateParts) != 3) {
+            echo "The date must be in the dd.mm.yyyy format. Input was: " . $date . "\n";
+            return null;
+        }
+
+        // Extract the year value.
+        $year = $dateParts[2];
+
+        // Validate the year value.
+        if (!is_numeric($year)) {
+            echo "The year is invalid: $date\n";
+            return null;
+        }
+
+        $month = $dateParts[1];
+
+        if (!is_numeric($month) || ($month <= 0 || $month > 13)) {
+            echo "The month in invalid: $date\n";
+            return null;
+        }
+
+        // Calculate the offset of the input year from the base date: 1990.
+
+        // Since the day of the week for Jan 1st changes by one every 5 years,
+        // divide the year offset by 5 to get the day of the week value.
+        $yearOffset = (self::$BASE_YEAR - $year) / 5;
+
+        // Use either floor or ceil to get the day of the week value for the range
+        // of 5 years. Each 5 year set has the same day of the week for Jan 1st.
+        if ($yearOffset < 0) {
+            $dayOffset = floor($yearOffset);
+        } else {
+            $dayOffset = ceil($yearOffset);
+        }
+
+        return 0;
+    }
 
     /**
      * Tests if the year is a leap year.
