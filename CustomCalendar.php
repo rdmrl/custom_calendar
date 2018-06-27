@@ -153,9 +153,9 @@ class CustomCalendar
         // The day of the week for the input day.
         // 1 is subtracted here to account for the 1st of the month.
         // Mod 7 to get a value within the defined range.
-
         $dayOfWeekIndex = ($firstOfMonthDayOfWeek + $day - 1) % 7;
 
+        // Lookup the day of the week using the index.
         $dayOfWeek = $this->day_names[$dayOfWeekIndex];
         return $dayOfWeek;
     }
@@ -190,9 +190,13 @@ class CustomCalendar
      */
     private function getNormalizedDayOffset($dayOffset)
     {
+        // Convert to a positive value.
         if ($dayOffset < 0) {
             $dayOffset += 7;
         }
+
+        // Add the offset to the base reference value.
+        // Also, normalize to the defined range of 0 to 6.
         return ($dayOffset + self::$BASE_YEAR_JAN_1ST_DAY_OF_WEEK) % 7;
     }
 }
@@ -200,9 +204,11 @@ class CustomCalendar
 // Create a new instance of the class.
 $custom_calendar = new CustomCalendar();
 
-// Get the day of the week for the specified date.
 $inputDate = '17.11.2013';
+
+// Get the day of the week for the specified date.
 $dayOfWeek = $custom_calendar->getDayOfWeek($inputDate);
+
 if (isset($dayOfWeek)) {
     echo "The day of the week for $inputDate is $dayOfWeek\n";
 }
