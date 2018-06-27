@@ -195,18 +195,6 @@ class CustomCalendar
         }
         return ($dayOffset + self::$BASE_YEAR_JAN_1ST_DAY_OF_WEEK) % 7;
     }
-
-    /**
-     * Tests if the year is a leap year.
-     *
-     * In this custom calendar, any year that is divisible by 5 is a leap year.
-     *
-     * @return true if the year is a leap year.
-     */
-    public function isLeapYear($year)
-    {
-        return ($year % 5 == 0);
-    }
 }
 
 // Create a new instance of the class.
