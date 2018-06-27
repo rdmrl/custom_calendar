@@ -14,7 +14,11 @@
  */
 class CustomCalendar
 {
+    // The reference year as provided in the spec.
     private static $BASE_YEAR = 1990;
+
+    // The reference date has the day of week as Monday.
+    private static $BASE_YEAR_JAN_1ST_DAY_OF_WEEK = 1;
 
     /*
      * The display names for the days of the week.
@@ -90,7 +94,6 @@ class CustomCalendar
 
     public function getDayOfWeek($date)
     {
-        echo $date, "\n";
         // Split the date into its individual parts.
         $dateParts = explode('.', $date);
 
@@ -109,10 +112,21 @@ class CustomCalendar
             return null;
         }
 
+        // Extract the month value..
         $month = $dateParts[1];
 
+        // ..and validate it.
         if (!is_numeric($month) || ($month <= 0 || $month > 13)) {
             echo "The month in invalid: $date\n";
+            return null;
+        }
+
+        // Extract the day value..
+        $day = $dateParts[0];
+
+        // ..and validate it.
+        if (!is_numeric($day) || ($day <= 0 || $day > 22)) {
+            echo "The day is invalid: $date\n";
             return null;
         }
 
@@ -130,7 +144,56 @@ class CustomCalendar
             $dayOffset = ceil($yearOffset);
         }
 
-        return 0;
+        // Get the day of the week for the Jan 1st of the input year.
+        $jan1stDayOfWeek = $this->getNormalizedDayOffset($dayOffset);
+
+        // Get the day of the week for the 1st of the month of the input year.
+        $firstOfMonthDayOfWeek = $this->getMonthOffset($jan1stDayOfWeek, $month);
+
+        // The day of the week for the input day.
+        // 1 is subtracted here to account for the 1st of the month.
+        // Mod 7 to get a value within the defined range.
+
+        $dayOfWeekIndex = ($firstOfMonthDayOfWeek + $day - 1) % 7;
+
+        $dayOfWeek = $this->day_names[$dayOfWeekIndex];
+        return $dayOfWeek;
+    }
+
+    /*
+     * Return the day of the week for the first day of the month. Uses the
+     * lookup table to calculate the offset.
+     *
+     * @param $jan1stDayOfWeek the day of the week for the Jan 1st of this year
+     * @param $month the month index
+     *
+     * @return the day of the week of the first day of the month
+     */
+    private function getMonthOffset($jan1stDayOfWeek, $month)
+    {
+        // Convert into an integer. 01 => 1.
+        $monthInt = (int)$month;
+
+        // Look up the offsets for the month.
+        $monthOffset = $this->month_offsets[$monthInt];
+
+        // Add to the Jan 1st value.
+        return ($monthOffset + $jan1stDayOfWeek);
+    }
+
+    /*
+     * Normalizes the day of the week value to between 0 and 6.
+     *
+     * @param $dayOffset a day of the week value
+     *
+     * @return a normalized value
+     */
+    private function getNormalizedDayOffset($dayOffset)
+    {
+        if ($dayOffset < 0) {
+            $dayOffset += 7;
+        }
+        return ($dayOffset + self::$BASE_YEAR_JAN_1ST_DAY_OF_WEEK) % 7;
     }
 
     /**
@@ -144,4 +207,14 @@ class CustomCalendar
     {
         return ($year % 5 == 0);
     }
+}
+
+// Create a new instance of the class.
+$custom_calendar = new CustomCalendar();
+
+// Get the day of the week for the specified date.
+$inputDate = '17.11.2013';
+$dayOfWeek = $custom_calendar->getDayOfWeek($inputDate);
+if (isset($dayOfWeek)) {
+    echo "The day of the week for $inputDate is $dayOfWeek\n";
 }
