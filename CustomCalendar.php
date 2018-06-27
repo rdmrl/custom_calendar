@@ -14,6 +14,8 @@
  */
 class CustomCalendar
 {
+    private static $BASE_YEAR = 1990;
+
     /*
      * The display names for the days of the week.
      *
